@@ -42,6 +42,44 @@ def get_users():
     serialize_users = list(map(lambda user:user.serialize(),users))
     return jsonify(serialize_users), 200
 
+@app.route('/people', methods=['GET'])
+def get_characters():
+    characters = Character.query.all()
+    serialize_characters = list(map(lambda character:character.serialize(),characters))
+    return jsonify(serialize_characters), 200
+
+@app.route('/planets', methods=['GET'])
+def get_planets():
+    planets = Planet.query.all()
+    serialize_planets = list(map(lambda planet:planet.serialize(),planets))
+    return jsonify(serialize_planets), 200
+
+@app.route('/starships', methods=['GET'])
+def get_starships():
+    starships = Starship.query.all()
+    serialize_starships = list(map(lambda starship:starship.serialize(),starships))
+    return jsonify(serialize_starships), 200
+
+@app.route("/people/<int:people_id>")
+def get_character(people_id):
+    character = Character.query.get(people_id)
+    return jsonify(character.serialize()), 200
+
+@app.route("/planets/<int:planets_id>")
+def get_planet(planets_id):
+    planet = Planet.query.get(planets_id)
+    return jsonify(planet.serialize()), 200
+
+@app.route("/starships/<int:starships_id>")
+def get_starship(starships_id):
+    starship = Starship.query.get(starships_id)
+    return jsonify(starship.serialize()), 200
+
+@app.route("/users/favorites/<int:user_id>")
+def get_user_favorites(user_id):
+    user = User.query.get(user_id)
+    user_favorites = user.serialize() .get("favorites")
+    return jsonify(user_favorites), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
