@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Character, Planet, Starship
+from models import db, User, Character, Planet, Starship, Favorite, FavoriteType
 #from models import Person
 
 app = Flask(__name__)
@@ -80,6 +80,42 @@ def get_user_favorites(user_id):
     user = User.query.get(user_id)
     user_favorites = user.serialize() .get("favorites")
     return jsonify(user_favorites), 200
+
+@app.route("/favorite/planet/<int:planet_id>", methods=['POST'])
+def add_favortiteplanet_to_user(planet_id):
+    body = request.get_json()
+    user_id = body.get("user_id")
+    new_favorite = Favorite(user_id=user_id, planet_id=planet_id, favorite_type=FavoriteType.PLANET)
+    db.session.add(new_favorite)
+    db.session.commit()
+    return jsonify(new_favorite.serialize()), 201
+
+@app.route("/favorite/people/<int:people_id>", methods=['POST'])
+def add_favortitepeople_to_user(people_id):
+    body = request.get_json()
+    user_id = body.get("user_id")
+    new_favorite = Favorite(user_id=user_id, character_id=people_id, favorite_type=FavoriteType.CHARACTER)
+    db.session.add(new_favorite)
+    db.session.commit()
+    return jsonify(new_favorite.serialize()), 201
+
+@app.route("/favorite/planet/<int:planet_id>", methods=['DELETE'])
+def delete_favortiteplanet_to_user(planet_id):
+    body = request.get_json()
+    user_id = body.get("user_id")
+    favorite_target = Favorite.query.filter_by(planet_id=planet_id, user_id=user_id). first()
+    db.session.delete(favorite_target)
+    db.session.commit()
+    return jsonify("deleted succesfully"), 200
+
+@app.route("/favorite/people/<int:people_id>", methods=['DELETE'])
+def delete_favortitepeople_to_user(people_id):
+    body = request.get_json()
+    user_id = body.get("user_id")
+    favorite_target = Favorite.query.filter_by(character_id=people_id, user_id=user_id). first()
+    db.session.delete(favorite_target)
+    db.session.commit()
+    return jsonify("deleted succesfully"), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':

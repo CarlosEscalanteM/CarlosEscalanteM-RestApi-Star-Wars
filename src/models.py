@@ -61,8 +61,7 @@ class Planet(db.Model):
             "rotation_period": self.rotation_period,
             "orbital_period": self.orbital_period,
             "population": self.population,
-            "terrain": self.terrain,
-        }
+            }
 
 class Starship(db.Model):
     __tablename__ = "starship"
